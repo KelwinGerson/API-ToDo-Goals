@@ -42,10 +42,36 @@ app.post('/users', (request, response) => {
 
 app.get('/todos', checksExistsUserAccount, (request, response) => {
   // Complete aqui
+  const { username } = request;
+
+  return response.json(username)
+
+
 });
 
 app.post('/todos', checksExistsUserAccount, (request, response) => {
   // Complete aqui
+  const {title} = request.body;
+  const {user} = request;
+
+  const todoOperation = {
+    id: uuidv4(),
+    title,
+    done: false,
+    deadline,
+    create_at: new Date()
+  }
+// { 
+// 	id: 'uuid', // precisa ser um uuid
+// 	title: 'Nome da tarefa',
+// 	done: false, 
+// 	deadline: '2021-02-27T00:00:00.000Z', 
+// 	created_at: '2021-02-22T00:00:00.000Z'
+// }
+// ```
+
+
+
 });
 
 app.put('/todos/:id', checksExistsUserAccount, (request, response) => {
