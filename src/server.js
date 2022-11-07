@@ -1,5 +1,5 @@
 const app = require('./');
 
 app.listen(3333, () => {
-    console.log("Listening API")
+    console.log("Listening API...")
 });

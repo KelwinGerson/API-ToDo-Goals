@@ -11,8 +11,19 @@ const users = [];
 
 
 function checksExistsUserAccount(request, response, next) {
-  // Complete aqui
+    const { username } = request.headers;
+
+    const user = users.find(user => user.username === username);
+
+    if(user) {
+      return response.status(400).json({error: "User not found!"})
+    }
+
+    request.user = user;
+
+    return next()
 }
+
 
 app.post('/users', (request, response) => {
   
@@ -23,7 +34,7 @@ app.post('/users', (request, response) => {
 
   if (userAlreadyExists) {
     return response.status(400).json({
-      error: "User already exist !"
+      error: "User already exists !"
     })
   }
 
@@ -42,17 +53,20 @@ app.post('/users', (request, response) => {
 
 app.get('/todos', checksExistsUserAccount, (request, response) => {
   // Complete aqui
-  const { username } = request;
+  const { username } = request.headers;
+  const { name } = request.body;
 
-  return response.json(username)
-
-
+  return response.json({name : name, username: username})
+  
 });
 
 app.post('/todos', checksExistsUserAccount, (request, response) => {
   // Complete aqui
-  const {title} = request.body;
-  const {user} = request;
+  const { title, deadline} = request.body;
+  // const { username } = request.headers;
+  const { user } = request;
+
+  const username = undefined;
 
   const todoOperation = {
     id: uuidv4(),
@@ -61,17 +75,17 @@ app.post('/todos', checksExistsUserAccount, (request, response) => {
     deadline,
     create_at: new Date()
   }
-// { 
-// 	id: 'uuid', // precisa ser um uuid
-// 	title: 'Nome da tarefa',
-// 	done: false, 
-// 	deadline: '2021-02-27T00:00:00.000Z', 
-// 	created_at: '2021-02-22T00:00:00.000Z'
-// }
-// ```
+  
+  // console.debug(user.todos)
 
+  // console.debug(users)
 
+  // // user.todos.push(todoOperation)
 
+  // // return response.status(201).send({
+  // //   message: "Create a taks with sucess"
+  // // })
+  
 });
 
 app.put('/todos/:id', checksExistsUserAccount, (request, response) => {
@@ -83,7 +97,12 @@ app.patch('/todos/:id/done', checksExistsUserAccount, (request, response) => {
 });
 
 app.delete('/todos/:id', checksExistsUserAccount, (request, response) => {
-  // Complete aqui
+  const { user } = request;
+
+  users.splice(user, 1);
+
+  return response.status(200).json(users)
+
 });
 
 module.exports = app;
