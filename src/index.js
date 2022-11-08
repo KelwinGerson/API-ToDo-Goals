@@ -16,7 +16,7 @@ function checksExistsUserAccount(request, response, next) {
     const user = users.find(user => user.username === username);
 
     if(user) {
-      return response.status(400).json({error: "User not found!"})
+      return response.status(404).json({error: "User not found!"})
     }
 
     request.user = user;
@@ -24,18 +24,15 @@ function checksExistsUserAccount(request, response, next) {
     return next()
 }
 
-
 app.post('/users', (request, response) => {
   const { username } = request.headers;
   const { name } = request.body;
 
-  const userAlreadyExists = users.some(
-    (user) => user.username === username
-  );
+  const userExists = users.find(user => user.username === username);
 
-  if (userAlreadyExists) {
+  if (userExists) {
     return response.status(400).json({
-      error: "User already exists !"
+      error: "Username already exists !"
     })
   }
 
@@ -49,6 +46,7 @@ app.post('/users', (request, response) => {
   users.push(user);
 
   return response.status(201).send({
+    user: user,
     message: "User create with sucess !"
   })
 
@@ -56,38 +54,29 @@ app.post('/users', (request, response) => {
 
 app.get('/todos', checksExistsUserAccount, (request, response) => {
   // Complete aqui
-  const { username } = request.headers;
-  const { name } = request.body;
+  const { user } = request;
 
-  return response.json({name : name, username: username})
+  return response.json(user.todos)
   
 });
 
 app.post('/todos', checksExistsUserAccount, (request, response) => {
-  // Complete aqui
   const { title, deadline} = request.body;
-  // const { username } = request.headers;
   const { user } = request;
 
-  const username = undefined;
-
-  const todoOperation = {
+  const todo = {
     id: uuidv4(),
     title,
     done: false,
-    deadline,
+    deadline: new Date(deadline),
     create_at: new Date()
   }
-  
-  // console.debug(user.todos)
 
-  // console.debug(users)
+  user.todos.push(todo)
 
-  // // user.todos.push(todoOperation)
-
-  // // return response.status(201).send({
-  // //   message: "Create a taks with sucess"
-  // // })
+  return response.status(201).send({
+    message: "Create a taks with sucess"
+  })
   
 });
 
