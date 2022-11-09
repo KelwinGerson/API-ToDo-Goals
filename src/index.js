@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
-
 const { v4: uuidv4 } = require('uuid');
+
 
 const app = express();
 
@@ -10,6 +10,7 @@ app.use(express.json());
 
 const users = [];
 
+// midleware
 function checksExistsUserAccount(request, response, next) {
   const { username } = request.headers;
 
@@ -27,7 +28,7 @@ function checksExistsUserAccount(request, response, next) {
 app.post('/users', (request, response) => {
   const { username, name } = request.body;
 
-  const userAlreadyExists = users.find(user => user.username === username);
+  const userAlreadyExists = users.find( user=> user.username === username);
 
   if (userAlreadyExists) {
     return response.status(400).json({ error: 'User already exists' });
